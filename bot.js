@@ -197,17 +197,30 @@ function analyzeBusiness(ans) {
       ageCoefficient = 1 - (0.3 * (ageDiff / 12));
     }
     
-    // Применяем возрастной коэффициент
-    maturity_score *= ageCoefficient;
+    // 🧮 Расчет коэффициента по количеству работников
+    const idealStaff = 10;
+    let staffCoefficient = 1;
+    
+    if (staff < 3) {
+      staffCoefficient = 0.6;
+      risks.push('мало сотрудников (<3)');
+    } else if (staff < idealStaff) {
+      // От 0.6 при 3 сотрудниках до 1 при 10 сотрудниках
+      staffCoefficient = 0.6 + (0.4 * ((staff - 3) / (idealStaff - 3)));
+    } else if (staff > 20) {
+      // От 1 при 20 сотрудниках до 0.7 при большем количестве
+      staffCoefficient = 0.7 + (0.3 * Math.max(0, (30 - staff) / 10));
+      if (staff > 30) {
+        staffCoefficient = 0.7;
+        risks.push('избыточный штат сотрудников (>30)');
+      }
+    }
+    
+    // Применяем возрастной коэффициент и коэффициент количества сотрудников
+    maturity_score *= ageCoefficient * staffCoefficient;
     
     if (years < 1) risks.push('молодой бизнес (<1 года)');
     if (years > 15) risks.push('устаревшая бизнес-модель (>15 лет)');
-
-    // 🧮 Проверка размера команды
-    if (staff < 3) {
-      maturity_score *= 0.9;
-      risks.push('мало сотрудников');
-    }
 
     const profit_margin = revenue > 0 ? ((revenue - expenses) / revenue) * 100 : 0;
     if (profit_margin < 10) {
@@ -272,6 +285,7 @@ function analyzeBusiness(ans) {
 Итоговый коэффициент: ${maturity_score.toFixed(2)}
 Рентабельность: ${profit_margin.toFixed(1)}%
 Коэффициент возраста: ${ageCoefficient.toFixed(2)}
+Коэффициент штата: ${staffCoefficient.toFixed(2)}
 
 ⚠️ Риски:
 - ${risks.length ? risks.join('\n- ') : 'не выявлены'}
