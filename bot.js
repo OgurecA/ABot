@@ -16,7 +16,10 @@ const QUESTIONS = [
   { text: 'Отслеживаются ключевые KPI?', type: 'bool' },
   { text: 'Как часто принимаются стратегические решения?', type: 'choice' },
   { text: "Есть ощущение, что бизнес 'упёрся'?", type: 'bool' },
+  { text: 'Есть ли несколько источников дохода?', type: 'bool' },
+  { text: 'Есть ли высокая текучесть персонала?', type: 'bool' },
 ];
+
 
 const userStates = {};
 
@@ -174,7 +177,7 @@ function generateBusinessPDF(resultText, outputPath, answers) {
 function analyzeBusiness(ans) {
   try {
     const [years, staff, revenue, expenses, ...rest] = ans;
-    const [team, processes, marketing, kpi, decisions, growth_block] = rest.map((v, i) => {
+    const [team, processes, marketing, kpi, decisions, growth_block, income_sources, high_turnover] = rest.map((v, i) => {
       if (i === 4) return v.toLowerCase();
       return v.toLowerCase() === 'да';
     });
@@ -273,6 +276,17 @@ function analyzeBusiness(ans) {
       maturity_score *= 0.9;
       risks.push('ощущается потолок роста');
     }
+
+    if (!income_sources) {
+      maturity_score *= 0.9;
+      risks.push('единственный источник дохода');
+    }
+
+    if (high_turnover) {
+      maturity_score *= 0.9;
+      risks.push('высокая текучесть персонала');
+    }
+
 
     level = '🔴';
     textLevel = 'КРАСНЫЙ';
