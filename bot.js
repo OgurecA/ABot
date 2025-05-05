@@ -162,11 +162,7 @@ function generateBusinessPDF(resultText, outputPath, answers) {
     doc.moveDown();
     doc.fontSize(14).text('Результаты анализа:', { underline: true });
     doc.moveDown();
-    doc.fontSize(12).text(`Итоговый коэффициент: ${maturity_score.toFixed(2)}`);
-    doc.fontSize(12).text(`Уровень зрелости: ${textLevel}`);
-    doc.moveDown();
-    doc.fontSize(12).text(summary, { align: 'left', lineGap: 6 });
-
+    doc.fontSize(12).text(resultText, { align: 'left', lineGap: 6 });
 
     doc.end();
 
@@ -297,14 +293,10 @@ function analyzeBusiness(ans) {
     return `🧠 CORE-Скан Завершён
 
 Итоговый коэффициент: ${maturity_score.toFixed(2) * 100}/100
-Уровень риска: ${level}
+Уровень риска: ${level} ${textLevel}
 
 📌 Вывод:
-${summary}`,
-  textLevel,
-  summary,
-  maturity_score
-
+${summary}`;
   } catch (e) {
     return 'Произошла ошибка при анализе данных.';
   }
