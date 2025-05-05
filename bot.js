@@ -229,8 +229,10 @@ function analyzeBusiness(ans) {
 
     if (profit_margin <= 1) {
       marginCoefficient = 0.4;
-    } else if (profit_margin < 100) {
-      marginCoefficient = 0.4 + 0.6 * ((profit_margin - 1) / 99);
+    } else if (profit_margin < 50) {
+      marginCoefficient = 0.4 + 0.6 * ((profit_margin - 1) / 49);
+    } else if (profit_margin > 50) {
+      marginCoefficient = 1;
     }
 
     maturity_score *= marginCoefficient;
