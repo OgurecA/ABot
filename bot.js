@@ -202,16 +202,16 @@ function analyzeBusiness(ans) {
     let staffCoefficient = 1;
     
     if (staff < 3) {
-      staffCoefficient = 0.6;
+      staffCoefficient = 0.7;
       risks.push('мало сотрудников (<3)');
     } else if (staff < idealStaff) {
       // От 0.6 при 3 сотрудниках до 1 при 10 сотрудниках
-      staffCoefficient = 0.6 + (0.4 * ((staff - 3) / (idealStaff - 3)));
+      staffCoefficient = 0.7 + (0.4 * ((staff - 3) / (idealStaff - 3)));
     } else if (staff > 20) {
       // От 1 при 20 сотрудниках до 0.7 при большем количестве
-      staffCoefficient = 0.7 + (0.3 * Math.max(0, (30 - staff) / 10));
+      staffCoefficient = 0.8 + (0.3 * Math.max(0, (30 - staff) / 10));
       if (staff > 30) {
-        staffCoefficient = 0.7;
+        staffCoefficient = 0.8;
         risks.push('избыточный штат сотрудников (>30)');
       }
     }
@@ -223,8 +223,19 @@ function analyzeBusiness(ans) {
     if (years > 15) risks.push('устаревшая бизнес-модель (>15 лет)');
 
     const profit_margin = revenue > 0 ? ((revenue - expenses) / revenue) * 100 : 0;
+
+    // Коэффициент от 0.4 (при 1%) до 1 (при 100%)
+    let marginCoefficient = 1;
+
+    if (profit_margin <= 1) {
+      marginCoefficient = 0.4;
+    } else if (profit_margin < 100) {
+      marginCoefficient = 0.4 + 0.6 * ((profit_margin - 1) / 99);
+    }
+
+    maturity_score *= marginCoefficient;
+
     if (profit_margin < 10) {
-      maturity_score *= 0.9;
       risks.push('низкая маржинальность');
     }
 
